@@ -16,9 +16,10 @@ public class Main {
                 currentDay.execute();
                 input = "";
             } catch (Exception e) {
-                System.out.println("Please enter a number between 1 and 25");
+                System.out.println("Invalid input.");
             }
         }
         scanner.close();
+        System.out.println("Program terminated.");
     }
 }
