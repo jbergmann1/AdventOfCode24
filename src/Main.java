@@ -14,7 +14,6 @@ public class Main {
                 Class<?> clazz = Class.forName(className);
                 Day currentDay = (Day) clazz.getDeclaredConstructor().newInstance();
                 currentDay.execute();
-                input = "";
             } catch (Exception e) {
                 System.out.println("Invalid input.");
             }
