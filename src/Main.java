@@ -15,7 +15,7 @@ public class Main {
                 Day currentDay = (Day) clazz.getDeclaredConstructor().newInstance();
                 currentDay.execute();
             } catch (Exception e) {
-                System.out.println("Invalid input.");
+                System.out.println("Invalid input, Exception: " + e.getMessage());
             }
         }
         scanner.close();
