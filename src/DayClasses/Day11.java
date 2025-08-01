@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class Day11 implements Day {
-    public static Set<Long> memSet = new HashSet<>();
     public static Map<Long, Long> mem = new HashMap<>();
     public static Map<Long, List<Long>> changeStoneMem = new HashMap<>();
 
@@ -22,44 +21,33 @@ public class Day11 implements Day {
                 stoneRow.add(Long.parseLong(stone));
             }
             for (Long stone : stoneRow) {
-                memSet.add(stone);
-                if (mem.containsKey(stone)) mem.put(stone, mem.get(stone) + 1);
-                else mem.put(stone, (long) 1);
+                mem.put(stone, mem.getOrDefault(stone, 0L) + 1);
             }
-            long result;
-            for (int i = 0; i < 75; i++) {
-                result = 0;
-                for (Long stone : memSet) {
-                    result += mem.get(stone);
+            System.out.println("Please enter a number n > 0 to calculate the amount of stones after n blinks.");
+            Scanner scanner = new Scanner(System.in);
+            try {
+                String input = scanner.nextLine();
+                long n = Long.parseLong(input);
+                for (int i = 0; i < n; i++) {
+                    blinkPerformant(new HashSet<>(mem.keySet()));
                 }
-                System.out.println("blink "+i+": "+result);
-                blinkPerformant();
+                System.out.println("blink " + n + ": " + getResult() + " stones.");
+            } catch (NoSuchElementException | NumberFormatException e) {
+                System.out.println("Invalid input.");
             }
-            result = 0;
-            for (Long stone : memSet) {
-                result += mem.get(stone);
-            }
-            System.out.println("final blink: "+result);
-            /*for (int i = 0; i < stoneRow.size(); i++) {
-                Collections.sort(stoneRow);
-                System.out.println("blink "+i+": "+stoneRow.size());
-                blink(stoneRow, stoneRow.size());
-            }
-            Collections.sort(stoneRow);
-            System.out.println("final blink: "+stoneRow.size());*/
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static List<Long> changeStone(Long stone) {
+    private List<Long> changeStone(Long stone) {
         List<Long> stones = new LinkedList<>();
         String stoneString = Long.toString(stone);
         if (stone == 0) {
-            stones.add((long)1);
+            stones.add(1L);
         } else if (stoneString.length() % 2 == 0) {
-            stones.add(Long.parseLong(stoneString.substring(stoneString.length()/2)));
-            stones.add(Long.parseLong(stoneString.substring(0, stoneString.length()/2)));
+            stones.add(Long.parseLong(stoneString.substring(stoneString.length() / 2)));
+            stones.add(Long.parseLong(stoneString.substring(0, stoneString.length() / 2)));
         } else {
             stones.add(stone * 2024);
         }
@@ -76,49 +64,28 @@ public class Day11 implements Day {
         }
     }
 
-    private void blinkPerformant() {
-        Set<Long> stones = new HashSet<>(); //all distinct stone values after the blink
-        Set<Long> removedStones = new HashSet<>(); //stones, that are no longer present after the blink
-        Map<Long, Long> stonesMap = new HashMap<>(); //stone values --> stone count
-        Map<Long, Long> stonesToSubtract = new HashMap<>(); //stone values --> stone count
+    private void blinkPerformant(Set<Long> memSet) {
+        Map<Long, Long> stonesMap = new HashMap<>(); //temporary map for changes in mem
+        Map<Long, Long> stonesToSubtract = new HashMap<>(); //temporary map for memorizing unnecessary stones
         for (Long stone : memSet) {
-            List<Long> changedStones = new LinkedList<>();
-            if (changeStoneMem.containsKey(stone)) {
-                changedStones.addAll(changeStoneMem.get(stone));
-            } else {
-                changedStones.addAll(changeStone(stone));
-            }
-            removedStones.add(stone);
+            List<Long> changedStones = new LinkedList<>(changeStoneMem.getOrDefault(stone, changeStone(stone))); //one or two new stones for current stone
             for (Long changedStone : changedStones) {
-                if (!mem.containsKey(changedStone)) {
-                    stonesMap.put(changedStone, stonesMap.getOrDefault(changedStone, (long) 0) + mem.get(stone));
-                    stones.add(changedStone);
-                }
-                else {
-                    stonesMap.put(changedStone, (stonesMap.getOrDefault(changedStone, (long) 0)) + mem.get(changedStone) + mem.get(stone));
-                    stones.add(changedStone);
-                    if (stonesToSubtract.containsKey(changedStone)) {
-                        stonesToSubtract.put(changedStone, stonesToSubtract.get(changedStone) + mem.get(changedStone));
-                    } else {
-                        stonesToSubtract.put(changedStone, mem.get(changedStone));
-                    }
-                }
+                stonesMap.put(changedStone, (stonesMap.getOrDefault(changedStone, 0L) + mem.getOrDefault(changedStone, 0L) + mem.get(stone))); //increase value of changed stone by existing values + new value (stone)
+                stonesToSubtract.merge(changedStone, mem.getOrDefault(changedStone, 0L), Long::sum); //unnecessary: existing value in mem since it will be transformed to a new value, too
             }
             if (stonesMap.containsKey(stone)) {
-                long stoneRemoveCount = stonesMap.get(stone) - stonesToSubtract.get(stone);
-                mem.remove(stone);
-                if (stoneRemoveCount <= 0) {
-                    stones.remove(stone);
-                    stonesMap.remove(stone);
-                } else {
-                    stonesMap.put(stone, stoneRemoveCount);
-                }
-            } else {
-                mem.remove(stone);
+                stonesMap.merge(stone, stonesMap.get(stone) - stonesToSubtract.get(stone), (_, newValue) -> newValue <= 0 ? null : newValue); //adjust value in stonesMap based on unnecessary stones or remove, if 0
             }
+            mem.remove(stone); //remove current stone after calculations are finished
         }
-        mem.putAll(stonesMap);
-        memSet.removeAll(removedStones);
-        memSet.addAll(stones);
+        mem.putAll(stonesMap); //adjust mem for next iteration
+    }
+
+    private Long getResult() {
+        long result = 0;
+        for (Long stone : mem.keySet()) {
+            result += mem.get(stone);
+        }
+        return result;
     }
 }
