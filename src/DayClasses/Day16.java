@@ -40,13 +40,13 @@ public class Day16 implements Day {
     private Set<Tupel<Integer>> optimalPathTiles(char[][] map, Tupel<Integer> endPosition, int[] dRow, int[] dCol) {
         Set<Tupel<Integer>> tiles = new HashSet<>();
 
-        Queue<State> toVisit = new LinkedList<>();
+        Queue<State16> toVisit = new LinkedList<>();
         for (int direction = 0; direction < 4; direction++) {
-            toVisit.add(new State(endPosition.x(), endPosition.y(), direction, costs[endPosition.x()][endPosition.y()][direction]));
+            toVisit.add(new State16(endPosition.x(), endPosition.y(), direction, costs[endPosition.x()][endPosition.y()][direction]));
         }
 
         while (!toVisit.isEmpty()) {
-            State current = toVisit.poll();
+            State16 current = toVisit.poll();
             int row = current.row;
             int col = current.col;
             int direction = Math.abs(current.direction);
@@ -58,7 +58,7 @@ public class Day16 implements Day {
             if (isValid(newRow, newCol, map)) {
                 if (currentCost - 1 == costs[newRow][newCol][direction]) {
                     costs[newRow][newCol][direction] = -1;
-                    toVisit.add(new State(newRow, newCol, direction, currentCost - 1));
+                    toVisit.add(new State16(newRow, newCol, direction, currentCost - 1));
                 }
             }
 
@@ -67,7 +67,7 @@ public class Day16 implements Day {
                     int rotationCost = (Math.abs(newDirection - direction) == 2) ? 2000 : 1000;
                     if (currentCost - rotationCost == costs[row][col][newDirection]) {
                         costs[row][col][newDirection] = -1;
-                        toVisit.add(new State(row, col, newDirection, currentCost - rotationCost));
+                        toVisit.add(new State16(row, col, newDirection, currentCost - rotationCost));
                     }
                 }
             }
@@ -85,15 +85,15 @@ public class Day16 implements Day {
             }
         }
 
-        Queue<State> toVisit = new PriorityQueue<>(Comparator.comparingInt(s -> s.cost));
+        Queue<State16> toVisit = new PriorityQueue<>(Comparator.comparingInt(s -> s.cost));
         for (int direction = 0; direction < 4; direction++) {
             int initialCost = (direction == startDirection) ? 0 : 1000;
             costs[startPosition.x()][startPosition.y()][direction] = initialCost;
-            toVisit.add(new State(startPosition.x(), startPosition.y(), direction, initialCost));
+            toVisit.add(new State16(startPosition.x(), startPosition.y(), direction, initialCost));
         }
 
         while (!toVisit.isEmpty()) {
-            State current = toVisit.poll();
+            State16 current = toVisit.poll();
             int row = current.row;
             int col = current.col;
             int direction = current.direction;
@@ -108,7 +108,7 @@ public class Day16 implements Day {
             if (isValid(newRow, newCol, map)) {
                 if (currentCost + 1 < costs[newRow][newCol][direction]) {
                     costs[newRow][newCol][direction] = currentCost + 1;
-                    toVisit.add(new State(newRow, newCol, direction, currentCost + 1));
+                    toVisit.add(new State16(newRow, newCol, direction, currentCost + 1));
                 }
             }
 
@@ -117,7 +117,7 @@ public class Day16 implements Day {
                     int rotationCost = (Math.abs(newDirection - direction) == 2) ? 2000 : 1000;
                     if (currentCost + rotationCost < costs[row][col][newDirection]) {
                         costs[row][col][newDirection] = currentCost + rotationCost;
-                        toVisit.add(new State(row, col, newDirection, currentCost + rotationCost));
+                        toVisit.add(new State16(row, col, newDirection, currentCost + rotationCost));
                     }
                 }
             }
