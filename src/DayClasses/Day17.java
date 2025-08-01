@@ -18,7 +18,7 @@ public class Day17 implements Day {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
             List<Integer> program = new ArrayList<>();
-            String programString = "";
+            String programString;
             for (int i = 0; i < 5; i++) {
                 line = reader.readLine();
                 int lastSpaceIndex = line.lastIndexOf(" ") + 1;
@@ -34,30 +34,9 @@ public class Day17 implements Day {
                     }
                 }
             }
-            long originalA = A;
-            long originalB = B;
-            long originalC = C;
             String result = runProgram(program);
-            System.out.println("original result: "+result);
-            System.out.println("desired result: "+programString);
-            List<Long> originalResult = convertToLong(result);
-            List<Long> desiredResult = convertToLong(programString);
-            long correctA = calculateAValue(originalA, originalResult, desiredResult);
-            System.out.println("correct value for A: "+correctA);
-            for (int i = (int) originalA; i < originalA + 100; i++) {
-                A = i;
-                B = originalB;
-                C = originalC;
-                pointer = 0;
-                System.out.println(programString+"; A: "+A+"; B: "+B+"; C: "+C+" --> "+runProgram(program));
-            }
-            A = correctA;
-            B = originalB;
-            C = originalC;
-            pointer = 0;
-            String finalResult = runProgram(program);
-            System.out.println("final result: "+finalResult);
-            System.out.println(desiredResult.equals(convertToLong(finalResult)));
+            System.out.println("output of initial program: " + result);
+            System.out.println("correct value for A, so the program outputs a copy of itself: " + reverseProgram(program));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,38 +82,29 @@ public class Day17 implements Day {
         return !output.isEmpty() ? output.substring(0, output.length() - 1) : output.toString();
     }
 
-    private void adv(int operand) { // opcode 0
-        A /= (int) Math.pow(2, getCombo(operand));
-    }
+    private void adv(int operand) { A >>= getCombo(operand); } //opcode 0
 
-    private void bxl(int operand) { // opcode 1
-        B ^= operand;
-    }
+    private void bxl(int operand) { B ^= operand; } //opcode 1
 
-    private void bst(int operand) { // opcode 2
-        B = getCombo(operand) % 8;
-    }
+    private void bst(int operand) { B = getCombo(operand) % 8; } //opcode 2
 
-    private boolean jnz(int operand) { // opcode 3
-        if (A != 0) pointer = operand;
-        return A != 0;
+    private boolean jnz(int operand) { //opcode 3
+        boolean jumped = A != 0;
+        if (jumped) pointer = operand;
+        return jumped;
     }
 
     private void bxc(int operand) { // opcode 4
         B ^= C;
-    }
+    } //opcode 4
 
     private long out(int operand) { // opcode 5
         return getCombo(operand) % 8;
-    }
+    } //opcode 5
 
-    private void bdv(int operand) { // opcode 6
-        B = A / (int) Math.pow(2, getCombo(operand));
-    }
+    private void bdv(int operand) { B = A >> getCombo(operand); } //opcode 6
 
-    private void cdv(int operand) { // opcode 7
-        C = A / (int) Math.pow(2, getCombo(operand));
-    }
+    private void cdv(int operand) { C = A >> getCombo(operand); } //opcode 7
 
     private long getCombo(int operand) {
         return switch (operand) {
@@ -146,27 +116,44 @@ public class Day17 implements Day {
         };
     }
 
-    private List<Long> convertToLong(String input) {
+    private List<Integer> convertToInteger(String input) {
+        if (input == null || input.isEmpty()) return new ArrayList<>();
         String[] split = input.split(",");
-        List<Long> result = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
         for (String s : split) {
-            result.add(Long.parseLong(s));
+            result.add(Integer.parseInt(s));
         }
         return result;
     }
 
-    private long calculateAValue(long originalA, List<Long> originalResult, List<Long> desiredResult) {
-        long toAdd = originalA % 8;
-        while (originalResult.size() < desiredResult.size()) {
-            originalResult.add(0L);
+    private long reverseProgram(List<Integer> program) {
+        int iterationCount = 0;
+        long currentA = 0;
+        List<Integer> aExtensions = new ArrayList<>(); //try 0 - 7
+        aExtensions.add(0);
+        while (iterationCount < program.size()) {
+            if (iterationCount < 0) return iterationCount; //tried all combinations, no valid solution
+            A = (currentA << 3) + aExtensions.getLast(); //add extension to bit shifted A
+            B = 0;
+            C = 0;
+            pointer = 0;
+            var currentResult = convertToInteger(runProgram(program));
+            if (currentResult.isEmpty() || !currentResult.equals(program.subList(program.size() - iterationCount - 1, program.size()))) { //current solution already wrong
+                if (aExtensions.getLast() == 7) { //dead end, go one step back and increment extension
+                    aExtensions.removeLast();
+                    aExtensions.set(aExtensions.size() - 1, aExtensions.getLast() + 1);
+                    currentA >>= 3;
+                    iterationCount--;
+                    continue;
+                }
+                aExtensions.set(aExtensions.size() - 1, aExtensions.getLast() + 1); //increment extension
+                continue;
+            }
+            //successful iteration
+            currentA = (currentA << 3) + aExtensions.getLast();
+            aExtensions.add(0);
+            iterationCount++;
         }
-        //System.out.println(originalResult);
-        for (int i = 0; i < desiredResult.size(); i++) {
-            //long add = (long) (((desiredResult.get(i) == 0 ? 0 : desiredResult.get(i)) - originalResult.get(i) == 0 ? 0 : desiredResult.get(i)) * Math.pow(8, i + 1));
-            long add = desiredResult.get(i);
-            add = add - originalResult.get(i) == 0 ? 0 : (long) ((desiredResult.get(i)) * Math.pow(8, i + 1));
-            toAdd += add;
-        }
-        return toAdd;
+        return currentA;
     }
 }
