@@ -9,6 +9,7 @@ import java.util.*;
 
 public class Day9 implements Day {
     private static int lastIndex = 0;
+
     @Override
     public void execute() {
         String filePath = Day.filePath + "input9.txt";
