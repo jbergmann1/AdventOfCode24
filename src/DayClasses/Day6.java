@@ -12,10 +12,11 @@ public class Day6 implements Day {
     @Override
     public void execute() {
         String filePath = Day.filePath + "input6.txt";
+        Helper<Character> helper = new Helper<>();
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
             int index = 0;
-            char[][] map = new char[130][130];
+            Character[][] map = new Character[130][130];
             while ((line = reader.readLine()) != null) {
                 for (int i = 0; i < line.length(); i++) {
                     map[index][i] = line.charAt(i);
@@ -32,7 +33,7 @@ public class Day6 implements Day {
                 }
             }
             var startPosition = new Tupel<>(position.x(), position.y());
-            char[][] tmpMap = new char[map.length][];
+            Character[][] tmpMap = new Character[map.length][];
             char[][] directionMap = new char[map.length][map.length];
             HashMap<Tupel<Integer>, Character> overwrittenDirections = new HashMap<>();
             for (int i = 0; i < map.length; i++) {
@@ -69,21 +70,14 @@ public class Day6 implements Day {
             while (position != null) {
                 position = doStep(map, directionMap, position.x(), position.y());
             }
-            for (char[] chars : map) {
-                System.out.println();
-                for (char aChar : chars) {
-                    System.out.print(aChar + " ");
-                }
-            }
-            System.out.println();
-            System.out.println();
+            helper.printArray(map);
             System.out.println("distinct visited positions: "+countPositions(map)+", cycle count: "+cycleCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private Tupel<Integer> doStep(char[][] map, char[][] directionMap, int x, int y) {
+    private Tupel<Integer> doStep(Character[][] map, char[][] directionMap, int x, int y) {
         char guard = map[x][y];
         directionMap[x][y] = guard;
         try {
@@ -131,13 +125,13 @@ public class Day6 implements Day {
         return null;
     }
 
-    private boolean checkCycle(char[][] map, char[][] directionMap, HashMap<Tupel<Integer>, Character> overwrittenDirections, int x, int y) {
+    private boolean checkCycle(Character[][] map, char[][] directionMap, HashMap<Tupel<Integer>, Character> overwrittenDirections, int x, int y) {
         return map[x][y] == directionMap[x][y] || overwrittenDirections.getOrDefault(new Tupel<>(x, y), '-') == map[x][y];
     }
 
-    private int countPositions(char[][]map) {
+    private int countPositions(Character[][] map) {
         int count = 0;
-        for (char[] chars : map) {
+        for (Character[] chars : map) {
             for (char aChar : chars) {
                 if (aChar == 'X') count++;
             }
