@@ -44,17 +44,17 @@ public class Day10 implements Day {
         }
     }
 
-    private int calculateScore(int[][] map, int row, int col, int currentScore, int lastHeight, HashSet<Tupel> visited) {
-        if (row < 0 || col < 0 || row == map.length || col == map[row].length || map[row][col] != lastHeight + 1 || visited.contains(new Tupel(row, col))) return 0;
+    private int calculateScore(int[][] map, int row, int col, int currentScore, int lastHeight, HashSet<Tupel<Integer>> visited) {
+        if (row < 0 || col < 0 || row == map.length || col == map[row].length || map[row][col] != lastHeight + 1 || visited.contains(new Tupel<>(row, col))) return 0;
         int height = map[row][col];
-        visited.add(new Tupel(row, col));
+        visited.add(new Tupel<>(row, col));
         if (height == 9) return 1;
         int newScore = currentScore;
         newScore += calculateScore(map, row + 1, col, currentScore, height, visited);
         newScore += calculateScore(map, row - 1, col, currentScore, height, visited);
         newScore += calculateScore(map, row, col + 1, currentScore, height, visited);
         newScore += calculateScore(map, row, col - 1, currentScore, height, visited);
-        if (newScore == currentScore) visited.remove(new Tupel(row, col));
+        if (newScore == currentScore) visited.remove(new Tupel<>(row, col));
         return newScore;
     }
 

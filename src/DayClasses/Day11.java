@@ -35,6 +35,7 @@ public class Day11 implements Day {
             } catch (NoSuchElementException | NumberFormatException e) {
                 System.out.println("Invalid input.");
             }
+            scanner.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,13 +57,13 @@ public class Day11 implements Day {
     }
 
     //naive implementation, very bad performance
-    private void blink(List<Long> stoneRow, int size) {
+    /* private void blink(List<Long> stoneRow, int size) {
         for (int index = size; index > 0; index--) {
             Long stone = stoneRow.removeFirst();
             List<Long> changedStones = changeStone(stone);
             stoneRow.addAll(changedStones);
         }
-    }
+    } */
 
     private void blinkPerformant(Set<Long> memSet) {
         Map<Long, Long> stonesMap = new HashMap<>(); //temporary map for changes in mem
