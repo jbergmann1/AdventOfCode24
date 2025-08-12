@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Day2 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         List<Integer> leftList = new ArrayList<>();
         List<Integer> rightList = new ArrayList<>();
         String filePath = Day.filePath + "input2.txt";
@@ -22,7 +22,7 @@ public class Day2 implements Day {
                 rightList.add(Integer.parseInt(parts[1]));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         Collections.sort(leftList);
@@ -33,6 +33,6 @@ public class Day2 implements Day {
             totalDistance += Math.abs(leftList.get(i) - rightList.get(i));
         }
 
-        System.out.println("Total distance between the lists: " + totalDistance);
+        return "Total distance between the lists: " + totalDistance;
     }
 }

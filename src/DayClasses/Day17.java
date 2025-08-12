@@ -13,7 +13,7 @@ public class Day17 implements Day {
     public static int pointer;
 
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input17.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
@@ -35,11 +35,11 @@ public class Day17 implements Day {
                 }
             }
             String result = runProgram(program);
-            System.out.println("output of initial program: " + result);
-            System.out.println("correct value for A, so the program outputs a copy of itself: " + reverseProgram(program));
+            return "output of initial program: " + result + "\ncorrect value for A, so the program outputs a copy of itself: " + reverseProgram(program);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private String runProgram(List<Integer> program) {

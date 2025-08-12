@@ -11,7 +11,7 @@ public class Day9 implements Day {
     private static int lastIndex = 0;
 
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input9.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String map = reader.readLine();
@@ -28,10 +28,11 @@ public class Day9 implements Day {
             for (int i = 9999; i > 0; i--) {
                 copyDisk = moveFile(copyDisk, freeSpace, i);
             }
-            System.out.println(calculateCheckSum(copyDisk));
+            return Long.toString(calculateCheckSum(copyDisk));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private List<String> generateDiskFromMap(String map) {

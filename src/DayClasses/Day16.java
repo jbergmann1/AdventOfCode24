@@ -11,7 +11,7 @@ public class Day16 implements Day {
     public static int[][][] costs;
 
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input16.txt";
         final int size = 141;
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
@@ -30,11 +30,11 @@ public class Day16 implements Day {
             }
             int[] dRow = {-1, 0, 1, 0};
             int[] dCol = {0, 1, 0, -1};
-            System.out.println(minCostPath(map, startPosition, endPosition, 1, dRow, dCol));
-            System.out.println(optimalPathTiles(map, endPosition, dRow, dCol).size());
+            return minCostPath(map, startPosition, endPosition, 1, dRow, dCol) + "\n" + optimalPathTiles(map, endPosition, dRow, dCol).size();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private Set<Tupel<Integer>> optimalPathTiles(char[][] map, Tupel<Integer> endPosition, int[] dRow, int[] dCol) {

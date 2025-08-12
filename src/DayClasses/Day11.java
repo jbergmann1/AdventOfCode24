@@ -12,7 +12,7 @@ public class Day11 implements Day {
     public static Map<Long, List<Long>> changeStoneMem = new HashMap<>();
 
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input11.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line = reader.readLine();
@@ -31,14 +31,15 @@ public class Day11 implements Day {
                 for (int i = 0; i < n; i++) {
                     blinkPerformant(new HashSet<>(mem.keySet()));
                 }
-                System.out.println("blink " + n + ": " + getResult() + " stones.");
+                return "blink " + n + ": " + getResult() + " stones.";
             } catch (NoSuchElementException | NumberFormatException e) {
                 System.out.println("Invalid input.");
             }
-            scanner.close();
+            //scanner.close(); //infinite loop
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private List<Long> changeStone(Long stone) {

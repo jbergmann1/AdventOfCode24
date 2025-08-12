@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Day13 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input13.txt";
         final long conversionError = 10000000000000L;
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
@@ -45,10 +45,11 @@ public class Day13 implements Day {
             for (int i = 0; i < prize.size(); i++) {
                 cost += calculateMinCost(a.get(i), b.get(i), prize.get(i));
             }
-            System.out.println(cost);
+            return Long.toString(cost);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private long calculateMinCost(Tupel<Long> a, Tupel<Long> b, Tupel<Long> prize) {

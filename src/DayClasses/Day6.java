@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class Day6 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input6.txt";
         Helper<Character> helper = new Helper<>();
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
@@ -71,10 +71,11 @@ public class Day6 implements Day {
                 position = doStep(map, directionMap, position.x(), position.y());
             }
             helper.printArray(map);
-            System.out.println("distinct visited positions: "+countPositions(map)+", cycle count: "+cycleCount);
+            return "distinct visited positions: "+countPositions(map)+", cycle count: "+cycleCount;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private Tupel<Integer> doStep(Character[][] map, char[][] directionMap, int x, int y) {

@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class Day8 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input8.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
@@ -79,11 +79,11 @@ public class Day8 implements Day {
                     }
                 }
             }
-            System.out.println(positionsA.size());
-            System.out.println(positionsB.size());
+            return positionsA.size() + "\n" + positionsB.size();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private double euclideanDistance(int row1, int col1, int row2, int col2) {

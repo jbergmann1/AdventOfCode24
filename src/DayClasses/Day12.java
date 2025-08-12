@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Day12 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input12.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
@@ -28,11 +28,11 @@ public class Day12 implements Day {
                 price += calculatePerimeter(map, region) * region.size();
                 priceNew += calculateSides(map, region) * region.size();
             }
-            System.out.println("Price for part one: "+price);
-            System.out.println("Price for part two: "+priceNew);
+            return "Price for part one: " + price + "\nPrice for part two: " + priceNew;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private void bfs(char[][] map, boolean[][] visited, int startRow, int startCol, List<Tupel<Integer>> region, char charToFind) {

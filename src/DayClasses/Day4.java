@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 
 public class Day4 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input4.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
@@ -28,10 +28,11 @@ public class Day4 implements Day {
                     if (checkX(words, i, j)) xCounter++;
                 }
             }
-            System.out.println("XMAS: " + wordCounter + ", X-MAS: " + xCounter);
+            return "XMAS: " + wordCounter + ", X-MAS: " + xCounter;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private int checkWord(char[][] words, int x, int y) {

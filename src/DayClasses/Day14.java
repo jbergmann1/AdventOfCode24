@@ -12,7 +12,7 @@ import java.util.Queue;
 
 public class Day14 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input14.txt";
         final int width = 101;
         final int height = 103;
@@ -38,11 +38,11 @@ public class Day14 implements Day {
                     positions.set(j, moveRobot(floor, positions.get(j), velocities.get(j)));
                 }
             }
-            System.out.println(calculateSafetyFactor(floor));
-            System.out.println(tree);
+            return Integer.toString(calculateSafetyFactor(floor)) + "\n" + tree;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private Tupel<Integer> moveRobot(int[][] floor, Tupel<Integer> position, Tupel<Integer> velocity) {

@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
 
 public class Day15 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input15.txt";
         final int size = 50;
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
@@ -43,11 +43,11 @@ public class Day15 implements Day {
                 position = doMovement(warehouse, movements.charAt(i), position.x(), position.y());
                 widePosition = doMovement(wideWarehouse, movements.charAt(i), widePosition.x(), widePosition.y());
             }
-            System.out.println(sumGPS(warehouse));
-            System.out.println(sumGPS(wideWarehouse));
+            return Integer.toString(sumGPS(warehouse)) + "\n" + sumGPS(wideWarehouse);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private Tupel<Integer> doMovement(char[][] warehouse, char movement, int row, int col) {

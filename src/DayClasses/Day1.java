@@ -9,7 +9,7 @@ import java.util.LinkedList;
 
 public class Day1 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input1.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
@@ -40,10 +40,11 @@ public class Day1 implements Day {
                     }
                 }
             }
-            System.out.println("Count of correct reports: "+correctReportCount);
+            return "Count of correct reports: "+correctReportCount;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private boolean Correct(LinkedList<Integer> report) {

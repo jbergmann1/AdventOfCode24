@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class Day3 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input3.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
@@ -29,10 +29,11 @@ public class Day3 implements Day {
                     }
                 }
             }
-            System.out.println(sum);
+            return Long.toString(sum);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private int checkMul(String instruction) {

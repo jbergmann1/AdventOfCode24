@@ -9,7 +9,7 @@ import java.util.HashSet;
 
 public class Day10 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input10.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
@@ -38,10 +38,11 @@ public class Day10 implements Day {
                     result += calculateRating(map, i, j, 0, -1);
                 }
             }
-            System.out.println(result);
+            return Integer.toString(result);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private int calculateScore(int[][] map, int row, int col, int currentScore, int lastHeight, HashSet<Tupel<Integer>> visited) {

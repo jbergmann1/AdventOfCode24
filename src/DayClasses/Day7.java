@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class Day7 implements Day {
     @Override
-    public void execute() {
+    public String execute() {
         String filePath = Day.filePath + "input7.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
@@ -25,10 +25,11 @@ public class Day7 implements Day {
                 }
                 equations.add(equation);
             }
-            System.out.println(calculate(equations));
+            return Long.toString(calculate(equations));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+        return "";
     }
 
     private long calculate(ArrayList<ArrayList<Long>> equations) {
