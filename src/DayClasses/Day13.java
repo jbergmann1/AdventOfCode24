@@ -16,24 +16,24 @@ public class Day13 implements Day {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
             int index = 0;
-            List<Tupel<Long>> a = new ArrayList<>();
-            List<Tupel<Long>> b = new ArrayList<>();
-            List<Tupel<Long>> prize = new ArrayList<>();
+            List<Tuple<Long>> a = new ArrayList<>();
+            List<Tuple<Long>> b = new ArrayList<>();
+            List<Tuple<Long>> prize = new ArrayList<>();
             String[] subS;
             while ((line = reader.readLine()) != null) {
                 int lineType = index % 4;
                 switch (lineType) {
                     case 0:
                         subS = line.split("\\+");
-                        a.add(new Tupel<>(Long.parseLong(subS[1].substring(0, subS[1].indexOf(","))), Long.parseLong(subS[2])));
+                        a.add(new Tuple<>(Long.parseLong(subS[1].substring(0, subS[1].indexOf(","))), Long.parseLong(subS[2])));
                         break;
                     case 1:
                         subS = line.split("\\+");
-                        b.add(new Tupel<>(Long.parseLong(subS[1].substring(0, subS[1].indexOf(","))), Long.parseLong(subS[2])));
+                        b.add(new Tuple<>(Long.parseLong(subS[1].substring(0, subS[1].indexOf(","))), Long.parseLong(subS[2])));
                         break;
                     case 2:
                         subS = line.split("=");
-                        prize.add(new Tupel<>(Long.parseLong(subS[1].substring(0, subS[1].indexOf(",")))+conversionError, Long.parseLong(subS[2])+conversionError));
+                        prize.add(new Tuple<>(Long.parseLong(subS[1].substring(0, subS[1].indexOf(",")))+conversionError, Long.parseLong(subS[2])+conversionError));
                         break;
                     default:
                         break;
@@ -52,7 +52,7 @@ public class Day13 implements Day {
         return "";
     }
 
-    private long calculateMinCost(Tupel<Long> a, Tupel<Long> b, Tupel<Long> prize) {
+    private long calculateMinCost(Tuple<Long> a, Tuple<Long> b, Tuple<Long> prize) {
         long det1 = calculateDeterminant(prize, b);
         long det2 = calculateDeterminant(a, prize);
         long det3 = calculateDeterminant(a, b);
@@ -62,7 +62,7 @@ public class Day13 implements Day {
         return costA * 3 + costB;
     }
 
-    private long calculateDeterminant(Tupel<Long> col1, Tupel<Long> col2) {
+    private long calculateDeterminant(Tuple<Long> col1, Tuple<Long> col2) {
         return col1.x() * col2.y() - col1.y() * col2.x();
     }
 }

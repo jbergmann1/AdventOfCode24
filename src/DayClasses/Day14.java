@@ -18,34 +18,34 @@ public class Day14 implements Day {
         final int height = 103;
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
-            List<Tupel<Integer>> positions = new ArrayList<>();
-            List<Tupel<Integer>> velocities = new ArrayList<>();
+            List<Tuple<Integer>> positions = new ArrayList<>();
+            List<Tuple<Integer>> velocities = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 String[] position = line.substring(0, line.indexOf(' ')).substring(2).split(",");
                 String[] velocity = line.substring(line.indexOf('v')).substring(2).split(",");
-                positions.add(new Tupel<>(Integer.parseInt(position[0]), Integer.parseInt(position[1])));
-                velocities.add(new Tupel<>(Integer.parseInt(velocity[0]), Integer.parseInt(velocity[1])));
+                positions.add(new Tuple<>(Integer.parseInt(position[0]), Integer.parseInt(position[1])));
+                velocities.add(new Tuple<>(Integer.parseInt(velocity[0]), Integer.parseInt(velocity[1])));
             }
             int[][] floor = new int[height][width];
-            for (Tupel<Integer> position : positions) {
+            for (Tuple<Integer> position : positions) {
                 floor[position.y()][position.x()]++;
             }
-            Tupel<Integer> tree = new Tupel<>(0, 0);
+            Tuple<Integer> tree = new Tuple<>(0, 0);
             for (int i = 0; i < 9999; i++) {
                 int size = getBiggestRegion(floor);
-                if (size > tree.x()) tree = new Tupel<>(size, i);
+                if (size > tree.x()) tree = new Tuple<>(size, i);
                 for (int j = 0; j < positions.size(); j++) {
                     positions.set(j, moveRobot(floor, positions.get(j), velocities.get(j)));
                 }
             }
-            return Integer.toString(calculateSafetyFactor(floor)) + "\n" + tree;
+            return calculateSafetyFactor(floor) + "\n" + tree;
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
         return "";
     }
 
-    private Tupel<Integer> moveRobot(int[][] floor, Tupel<Integer> position, Tupel<Integer> velocity) {
+    private Tuple<Integer> moveRobot(int[][] floor, Tuple<Integer> position, Tuple<Integer> velocity) {
         int newX = position.x() + velocity.x();
         int newY = position.y() + velocity.y();
         if (newX >= floor[0].length) newX -= floor[0].length;
@@ -54,7 +54,7 @@ public class Day14 implements Day {
         if (newY < 0) newY += floor.length;
         floor[position.y()][position.x()]--;
         floor[newY][newX]++;
-        return new Tupel<>(newX, newY);
+        return new Tuple<>(newX, newY);
     }
 
     private int calculateSafetyFactor(int[][] floor) {
@@ -82,25 +82,25 @@ public class Day14 implements Day {
         return robotCounts[0] * robotCounts[1] * robotCounts[2] * robotCounts[3];
     }
 
-    private void bfs(int[][] floor, boolean[][] visited, int startRow, int startCol, List<Tupel<Integer>> region) {
-        Queue<Tupel<Integer>> queue = new LinkedList<>();
-        queue.add(new Tupel<>(startRow, startCol));
+    private void bfs(int[][] floor, boolean[][] visited, int startRow, int startCol, List<Tuple<Integer>> region) {
+        Queue<Tuple<Integer>> queue = new LinkedList<>();
+        queue.add(new Tuple<>(startRow, startCol));
         visited[startRow][startCol] = true;
         int[] dr = {1, -1, 0, 0};
         int[] dc = {0, 0, 1, -1};
 
         while (!queue.isEmpty()) {
-            Tupel<Integer> current = queue.poll();
+            Tuple<Integer> current = queue.poll();
             int row = current.x();
             int col = current.y();
-            region.add(new Tupel<>(row, col));
+            region.add(new Tuple<>(row, col));
 
             for (int i = 0; i < 4; i++) {
                 int newRow = row + dr[i];
                 int newCol = col + dc[i];
                 if (newRow >= 0 && newRow < floor.length && newCol >= 0 && newCol < floor[0].length &&
                         !visited[newRow][newCol] && floor[newRow][newCol] != 0) {
-                    queue.add(new Tupel<>(newRow, newCol));
+                    queue.add(new Tuple<>(newRow, newCol));
                     visited[newRow][newCol] = true;
                 }
             }
@@ -111,12 +111,12 @@ public class Day14 implements Day {
         int rows = floor.length;
         int cols = floor[0].length;
         boolean[][] visited = new boolean[rows][cols];
-        List<List<Tupel<Integer>>> regions = new ArrayList<>();
+        List<List<Tuple<Integer>>> regions = new ArrayList<>();
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 if (!visited[row][col]) {
-                    List<Tupel<Integer>> region = new ArrayList<>();
+                    List<Tuple<Integer>> region = new ArrayList<>();
                     bfs(floor, visited, row, col, region);
                     if (!region.isEmpty()) {
                         regions.add(region);
@@ -125,7 +125,7 @@ public class Day14 implements Day {
             }
         }
         int size = 0;
-        for (List<Tupel<Integer>> region : regions) {
+        for (List<Tuple<Integer>> region : regions) {
             if (region.size() > size) size = region.size();
         }
         return size;

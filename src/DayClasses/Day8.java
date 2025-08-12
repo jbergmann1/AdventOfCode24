@@ -53,8 +53,8 @@ public class Day8 implements Day {
                     }
                 }
             }
-            Set<Tupel<Integer>> positionsA = new HashSet<>();
-            Set<Tupel<Integer>> positionsB = new HashSet<>();
+            Set<Tuple<Integer>> positionsA = new HashSet<>();
+            Set<Tuple<Integer>> positionsB = new HashSet<>();
             for (int[][] antenna : antennas) {
                 if (antenna == null) continue;
                 for (int j = 0; j < antenna.length; j++) {
@@ -69,10 +69,10 @@ public class Day8 implements Day {
                                 double jGradient = gradient(l, m, jAntenna[0], jAntenna[1]);
                                 double kGradient = gradient(l, m, kAntenna[0], kAntenna[1]);
                                 if (jDistance == antennaDistance && kDistance == antennaDistance * 2 || jDistance == antennaDistance * 2 && kDistance == antennaDistance) {
-                                    positionsA.add(new Tupel<>(l, m));
+                                    positionsA.add(new Tuple<>(l, m));
                                 }
                                 if (jGradient == kGradient || jDistance == 0 || kDistance == 0) {
-                                    positionsB.add(new Tupel<>(l, m));
+                                    positionsB.add(new Tuple<>(l, m));
                                 }
                             }
                         }

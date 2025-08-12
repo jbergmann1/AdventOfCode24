@@ -21,10 +21,10 @@ public class Day12 implements Day {
                 }
                 rows++;
             }
-            List<List<Tupel<Integer>>> regions = getRegions(map);
+            List<List<Tuple<Integer>>> regions = getRegions(map);
             int price = 0;
             int priceNew = 0;
-            for (List<Tupel<Integer>> region : regions) {
+            for (List<Tuple<Integer>> region : regions) {
                 price += calculatePerimeter(map, region) * region.size();
                 priceNew += calculateSides(map, region) * region.size();
             }
@@ -35,41 +35,41 @@ public class Day12 implements Day {
         return "";
     }
 
-    private void bfs(char[][] map, boolean[][] visited, int startRow, int startCol, List<Tupel<Integer>> region, char charToFind) {
-        Queue<Tupel<Integer>> queue = new LinkedList<>();
-        queue.add(new Tupel<>(startRow, startCol));
+    private void bfs(char[][] map, boolean[][] visited, int startRow, int startCol, List<Tuple<Integer>> region, char charToFind) {
+        Queue<Tuple<Integer>> queue = new LinkedList<>();
+        queue.add(new Tuple<>(startRow, startCol));
         visited[startRow][startCol] = true;
         int[] dr = {1, -1, 0, 0};
         int[] dc = {0, 0, 1, -1};
 
         while (!queue.isEmpty()) {
-            Tupel<Integer> current = queue.poll();
+            Tuple<Integer> current = queue.poll();
             int row = current.x();
             int col = current.y();
-            region.add(new Tupel<>(row, col));
+            region.add(new Tuple<>(row, col));
 
             for (int i = 0; i < 4; i++) {
                 int newRow = row + dr[i];
                 int newCol = col + dc[i];
                 if (newRow >= 0 && newRow < map.length && newCol >= 0 && newCol < map[0].length &&
                         !visited[newRow][newCol] && map[newRow][newCol] == charToFind) {
-                    queue.add(new Tupel<>(newRow, newCol));
+                    queue.add(new Tuple<>(newRow, newCol));
                     visited[newRow][newCol] = true;
                 }
             }
         }
     }
 
-    private List<List<Tupel<Integer>>> getRegions(char[][] map) {
+    private List<List<Tuple<Integer>>> getRegions(char[][] map) {
         int rows = map.length;
         int cols = map[0].length;
         boolean[][] visited = new boolean[rows][cols];
-        List<List<Tupel<Integer>>> regions = new ArrayList<>();
+        List<List<Tuple<Integer>>> regions = new ArrayList<>();
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 if (!visited[row][col]) {
-                    List<Tupel<Integer>> region = new ArrayList<>();
+                    List<Tuple<Integer>> region = new ArrayList<>();
                     bfs(map, visited, row, col, region, map[row][col]);
                     if (!region.isEmpty()) {
                         regions.add(region);
@@ -80,10 +80,10 @@ public class Day12 implements Day {
         return regions;
     }
 
-    private int calculatePerimeter(char[][] map, List<Tupel<Integer>> region) {
+    private int calculatePerimeter(char[][] map, List<Tuple<Integer>> region) {
         int perimeter = 0;
 
-        for (Tupel<Integer> coordinates : region) {
+        for (Tuple<Integer> coordinates : region) {
             int row = coordinates.x();
             int col = coordinates.y();
             char field = map[row][col];
@@ -95,28 +95,28 @@ public class Day12 implements Day {
         return perimeter;
     }
 
-    private int calculateSides(char[][] map, List<Tupel<Integer>> region) {
+    private int calculateSides(char[][] map, List<Tuple<Integer>> region) {
         int sides = 0;
-        Set<Tupel<Integer>> visited = new HashSet<>();
+        Set<Tuple<Integer>> visited = new HashSet<>();
 
-        for (Tupel<Integer> coordinates : region) {
+        for (Tuple<Integer> coordinates : region) {
             visited.add(coordinates);
             int row = coordinates.x();
             int col = coordinates.y();
-            if (isLeftOuterBorder(map, row, col) && (!isLeftOuterBorder(map, row+1, col) || !visited.contains(new Tupel<>(row + 1, col))) &&
-                    (!isLeftOuterBorder(map, row-1, col) || !visited.contains(new Tupel<>(row - 1, col)))) {
+            if (isLeftOuterBorder(map, row, col) && (!isLeftOuterBorder(map, row+1, col) || !visited.contains(new Tuple<>(row + 1, col))) &&
+                    (!isLeftOuterBorder(map, row-1, col) || !visited.contains(new Tuple<>(row - 1, col)))) {
                 sides++;
             }
-            if (isRightOuterBorder(map, row, col) && (!isRightOuterBorder(map, row+1, col) || !visited.contains(new Tupel<>(row + 1, col))) &&
-                    (!isRightOuterBorder(map, row-1, col) || !visited.contains(new Tupel<>(row - 1, col)))) {
+            if (isRightOuterBorder(map, row, col) && (!isRightOuterBorder(map, row+1, col) || !visited.contains(new Tuple<>(row + 1, col))) &&
+                    (!isRightOuterBorder(map, row-1, col) || !visited.contains(new Tuple<>(row - 1, col)))) {
                 sides++;
             }
-            if (isTopOuterBorder(map, row, col) && (!isTopOuterBorder(map, row, col+1) || !visited.contains(new Tupel<>(row, col + 1))) &&
-                    (!isTopOuterBorder(map, row, col-1) || !visited.contains(new Tupel<>(row, col - 1)))) {
+            if (isTopOuterBorder(map, row, col) && (!isTopOuterBorder(map, row, col+1) || !visited.contains(new Tuple<>(row, col + 1))) &&
+                    (!isTopOuterBorder(map, row, col-1) || !visited.contains(new Tuple<>(row, col - 1)))) {
                 sides++;
             }
-            if (isBottomOuterBorder(map, row, col) && (!isBottomOuterBorder(map, row, col+1) || !visited.contains(new Tupel<>(row, col + 1))) &&
-                    (!isBottomOuterBorder(map, row, col-1) || !visited.contains(new Tupel<>(row, col - 1)))) {
+            if (isBottomOuterBorder(map, row, col) && (!isBottomOuterBorder(map, row, col+1) || !visited.contains(new Tuple<>(row, col + 1))) &&
+                    (!isBottomOuterBorder(map, row, col-1) || !visited.contains(new Tuple<>(row, col - 1)))) {
                 sides++;
             }
         }

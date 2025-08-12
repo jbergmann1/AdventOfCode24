@@ -21,8 +21,8 @@ public class Day15 implements Day {
             char[][] warehouse = new char[size][size];
             char[][] wideWarehouse = new char[size][size * 2];
             StringBuilder movements = new StringBuilder();
-            Tupel<Integer> position = new Tupel<>(0, 0);
-            Tupel<Integer> widePosition = new Tupel<>(0, 0);
+            Tuple<Integer> position = new Tuple<>(0, 0);
+            Tuple<Integer> widePosition = new Tuple<>(0, 0);
             while ((line = reader.readLine()) != null) {
                 if (index < size) {
                     for (int i = 0; i < line.length(); i++) {
@@ -30,8 +30,8 @@ public class Day15 implements Day {
                         warehouse[index][i] = c;
                         fillWideWarehouse(wideWarehouse, c, index, i * 2);
                         if (c == '@') {
-                            position = new Tupel<>(index, i);
-                            widePosition = new Tupel<>(index, i * 2);
+                            position = new Tuple<>(index, i);
+                            widePosition = new Tuple<>(index, i * 2);
                         }
                     }
                     index++;
@@ -50,44 +50,44 @@ public class Day15 implements Day {
         return "";
     }
 
-    private Tupel<Integer> doMovement(char[][] warehouse, char movement, int row, int col) {
+    private Tuple<Integer> doMovement(char[][] warehouse, char movement, int row, int col) {
         return switch (movement) {
-            case '<' -> movementHelper(warehouse, row, col, (r, c) -> new Tupel<>(r, c - 1));
-            case '>' -> movementHelper(warehouse, row, col, (r, c) -> new Tupel<>(r, c + 1));
-            case '^' -> movementHelper(warehouse, row, col, (r, c) -> new Tupel<>(r - 1, c));
-            case 'v' -> movementHelper(warehouse, row, col, (r, c) -> new Tupel<>(r + 1, c));
-            default -> new Tupel<>(row, col);
+            case '<' -> movementHelper(warehouse, row, col, (r, c) -> new Tuple<>(r, c - 1));
+            case '>' -> movementHelper(warehouse, row, col, (r, c) -> new Tuple<>(r, c + 1));
+            case '^' -> movementHelper(warehouse, row, col, (r, c) -> new Tuple<>(r - 1, c));
+            case 'v' -> movementHelper(warehouse, row, col, (r, c) -> new Tuple<>(r + 1, c));
+            default -> new Tuple<>(row, col);
         };
     }
 
-    private Tupel<Integer> movementHelper(char[][] warehouse, int row, int col, BiFunction<Integer, Integer, Tupel<Integer>> moveDirectional) {
-        Queue<Tupel<Integer>> positionsToVisit = new LinkedList<>();
-        Stack<Tupel<Integer>> positionsToMove = new Stack<>();
-        positionsToVisit.add(new Tupel<>(row, col));
+    private Tuple<Integer> movementHelper(char[][] warehouse, int row, int col, BiFunction<Integer, Integer, Tuple<Integer>> moveDirectional) {
+        Queue<Tuple<Integer>> positionsToVisit = new LinkedList<>();
+        Stack<Tuple<Integer>> positionsToMove = new Stack<>();
+        positionsToVisit.add(new Tuple<>(row, col));
         while (!positionsToVisit.isEmpty()) {
-            Tupel<Integer> currentPosition = positionsToVisit.poll();
-            Tupel<Integer> nextPosition = moveDirectional.apply(currentPosition.x(), currentPosition.y());
+            Tuple<Integer> currentPosition = positionsToVisit.poll();
+            Tuple<Integer> nextPosition = moveDirectional.apply(currentPosition.x(), currentPosition.y());
             char currentObject = warehouse[currentPosition.x()][currentPosition.y()];
-            BiFunction<Integer, Integer, Tupel<Integer>> moveToCompleteBox;
+            BiFunction<Integer, Integer, Tuple<Integer>> moveToCompleteBox;
             switch (currentObject) {
                 case '#':
-                    return new Tupel<>(row, col);
+                    return new Tuple<>(row, col);
                 case '.':
                     continue;
                 case '[':
-                    moveToCompleteBox = (r, c) -> new Tupel<>(r, c + 1);
+                    moveToCompleteBox = (r, c) -> new Tuple<>(r, c + 1);
                     break;
                 case ']':
-                    moveToCompleteBox = (r, c) -> new Tupel<>(r, c - 1);
+                    moveToCompleteBox = (r, c) -> new Tuple<>(r, c - 1);
                     break;
                 default:
-                    moveToCompleteBox = Tupel::new;
+                    moveToCompleteBox = Tuple::new;
             }
             addNextToVisit(positionsToVisit, positionsToMove, currentPosition, nextPosition, moveToCompleteBox, moveDirectional);
         }
         while (!positionsToMove.isEmpty()) {
-            Tupel<Integer> currentPos = positionsToMove.pop();
-            Tupel<Integer> newPos = moveDirectional.apply(currentPos.x(), currentPos.y());
+            Tuple<Integer> currentPos = positionsToMove.pop();
+            Tuple<Integer> newPos = moveDirectional.apply(currentPos.x(), currentPos.y());
             warehouse[newPos.x()][newPos.y()] = warehouse[currentPos.x()][currentPos.y()];
             for (int i = 0; i < positionsToMove.size(); i++) {
                 if (moveDirectional.apply(positionsToMove.get(i).x(), positionsToMove.get(i).y()).equals(currentPos)) break;
@@ -98,15 +98,15 @@ public class Day15 implements Day {
         return moveDirectional.apply(row, col);
     }
 
-    private void addNextToVisit(Queue<Tupel<Integer>> positionsToVisit, Stack<Tupel<Integer>> positionsToMove, Tupel<Integer> currentPosition, Tupel<Integer> nextPosition, BiFunction<Integer, Integer, Tupel<Integer>> moveToCompleteBox, BiFunction<Integer, Integer, Tupel<Integer>> moveDirectional) {
-        Tupel<Integer> secondBoxPart = moveToCompleteBox.apply(currentPosition.x(), currentPosition.y());
-        Tupel<Integer> additionalNextPosition = moveDirectional.apply(secondBoxPart.x(), secondBoxPart.y());
+    private void addNextToVisit(Queue<Tuple<Integer>> positionsToVisit, Stack<Tuple<Integer>> positionsToMove, Tuple<Integer> currentPosition, Tuple<Integer> nextPosition, BiFunction<Integer, Integer, Tuple<Integer>> moveToCompleteBox, BiFunction<Integer, Integer, Tuple<Integer>> moveDirectional) {
+        Tuple<Integer> secondBoxPart = moveToCompleteBox.apply(currentPosition.x(), currentPosition.y());
+        Tuple<Integer> additionalNextPosition = moveDirectional.apply(secondBoxPart.x(), secondBoxPart.y());
         addToDataStructures(currentPosition, nextPosition, currentPosition, positionsToVisit, positionsToMove);
         if (secondBoxPart.equals(currentPosition)) return;
         addToDataStructures(currentPosition, additionalNextPosition, secondBoxPart, positionsToVisit, positionsToMove);
     }
 
-    private void addToDataStructures(Tupel<Integer> currentPosition, Tupel<Integer> nextPosition, Tupel<Integer> positionToMove, Queue<Tupel<Integer>> positionsToVisit, Stack<Tupel<Integer>> positionsToMove) {
+    private void addToDataStructures(Tuple<Integer> currentPosition, Tuple<Integer> nextPosition, Tuple<Integer> positionToMove, Queue<Tuple<Integer>> positionsToVisit, Stack<Tuple<Integer>> positionsToMove) {
         if (!positionsToVisit.contains(nextPosition) && !nextPosition.equals(currentPosition)) {
             positionsToVisit.add(nextPosition);
             positionsToMove.push(positionToMove);

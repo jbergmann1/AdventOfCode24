@@ -23,19 +23,19 @@ public class Day6 implements Day {
                 }
                 index++;
             }
-            Tupel<Integer> position = new Tupel<>(-1, -1);
+            Tuple<Integer> position = new Tuple<>(-1, -1);
             for (int i = 0; i < map.length; i++) {
                 for (int j = 0; j < map[i].length; j++) {
                     if (map[i][j] != '.' && map[i][j] != '#') {
-                        position = new Tupel<>(i, j);
+                        position = new Tuple<>(i, j);
                         break;
                     }
                 }
             }
-            var startPosition = new Tupel<>(position.x(), position.y());
+            var startPosition = new Tuple<>(position.x(), position.y());
             Character[][] tmpMap = new Character[map.length][];
             char[][] directionMap = new char[map.length][map.length];
-            HashMap<Tupel<Integer>, Character> overwrittenDirections = new HashMap<>();
+            HashMap<Tuple<Integer>, Character> overwrittenDirections = new HashMap<>();
             for (int i = 0; i < map.length; i++) {
                 tmpMap[i] = Arrays.copyOf(map[i], map[i].length);
             }
@@ -50,10 +50,10 @@ public class Day6 implements Day {
                     overwrittenDirections.clear();
                     boolean hasCycle = false;
                     boolean samePosition = false;
-                    var newPosition = new Tupel<>(-1, -1);
+                    var newPosition = new Tuple<>(-1, -1);
                     while (position != null && !hasCycle) {
                         if (directionMap[position.x()][position.y()] != ' ' && !samePosition) {
-                            overwrittenDirections.put(new Tupel<>(position.x(), position.y()), directionMap[position.x()][position.y()]);
+                            overwrittenDirections.put(new Tuple<>(position.x(), position.y()), directionMap[position.x()][position.y()]);
                         }
                         hasCycle = checkCycle(map, directionMap, overwrittenDirections, position.x(), position.y());
                         newPosition = doStep(map, directionMap, position.x(), position.y());
@@ -64,7 +64,7 @@ public class Day6 implements Day {
                     for (int ind = 0; ind < map.length; ind++) {
                         map[ind] = Arrays.copyOf(tmpMap[ind], tmpMap[ind].length);
                     }
-                    position = new Tupel<>(startPosition.x(), startPosition.y());
+                    position = new Tuple<>(startPosition.x(), startPosition.y());
                 }
             }
             while (position != null) {
@@ -78,7 +78,7 @@ public class Day6 implements Day {
         return "";
     }
 
-    private Tupel<Integer> doStep(Character[][] map, char[][] directionMap, int x, int y) {
+    private Tuple<Integer> doStep(Character[][] map, char[][] directionMap, int x, int y) {
         char guard = map[x][y];
         directionMap[x][y] = guard;
         try {
@@ -86,38 +86,38 @@ public class Day6 implements Day {
                 case '<':
                     if (map[x][y-1] == '#') {
                         map[x][y] = '^';
-                        return new Tupel<>(x, y);
+                        return new Tuple<>(x, y);
                     } else {
                         map[x][y] = 'X';
                         map[x][y-1] = guard;
-                        return new Tupel<>(x, y-1);
+                        return new Tuple<>(x, y-1);
                     }
                 case '>':
                     if (map[x][y+1] == '#') {
                         map[x][y] = 'v';
-                        return new Tupel<>(x, y);
+                        return new Tuple<>(x, y);
                     } else {
                         map[x][y] = 'X';
                         map[x][y+1] = guard;
-                        return new Tupel<>(x, y+1);
+                        return new Tuple<>(x, y+1);
                     }
                 case '^':
                     if (map[x-1][y] == '#') {
                         map[x][y] = '>';
-                        return new Tupel<>(x, y);
+                        return new Tuple<>(x, y);
                     } else {
                         map[x][y] = 'X';
                         map[x-1][y] = guard;
-                        return new Tupel<>(x-1, y);
+                        return new Tuple<>(x-1, y);
                     }
                 case 'v':
                     if (map[x+1][y] == '#') {
                         map[x][y] = '<';
-                        return new Tupel<>(x, y);
+                        return new Tuple<>(x, y);
                     } else {
                         map[x][y] = 'X';
                         map[x+1][y] = guard;
-                        return new Tupel<>(x+1, y);
+                        return new Tuple<>(x+1, y);
                     }
             }
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -126,8 +126,8 @@ public class Day6 implements Day {
         return null;
     }
 
-    private boolean checkCycle(Character[][] map, char[][] directionMap, HashMap<Tupel<Integer>, Character> overwrittenDirections, int x, int y) {
-        return map[x][y] == directionMap[x][y] || overwrittenDirections.getOrDefault(new Tupel<>(x, y), '-') == map[x][y];
+    private boolean checkCycle(Character[][] map, char[][] directionMap, HashMap<Tuple<Integer>, Character> overwrittenDirections, int x, int y) {
+        return map[x][y] == directionMap[x][y] || overwrittenDirections.getOrDefault(new Tuple<>(x, y), '-') == map[x][y];
     }
 
     private int countPositions(Character[][] map) {

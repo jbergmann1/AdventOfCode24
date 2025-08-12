@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class Day16 implements Day {
-    public static int[][][] costs;
+    private static int[][][] costs;
 
     @Override
     public String execute() {
@@ -17,14 +17,14 @@ public class Day16 implements Day {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line;
             int index = 0;
-            Tupel<Integer> startPosition = new Tupel<>(0, 0);
-            Tupel<Integer> endPosition = new Tupel<>(size - 1, size - 1);
+            Tuple<Integer> startPosition = new Tuple<>(0, 0);
+            Tuple<Integer> endPosition = new Tuple<>(size - 1, size - 1);
             char[][] map = new char[size][size];
             while ((line = reader.readLine()) != null) {
                 for (int i = 0; i < line.length(); i++) {
                     map[index][i] = line.charAt(i);
-                    if (map[index][i] == 'S') startPosition = new Tupel<>(index, i);
-                    if (map[index][i] == 'E') endPosition = new Tupel<>(index, i);
+                    if (map[index][i] == 'S') startPosition = new Tuple<>(index, i);
+                    if (map[index][i] == 'E') endPosition = new Tuple<>(index, i);
                 }
                 index++;
             }
@@ -37,8 +37,8 @@ public class Day16 implements Day {
         return "";
     }
 
-    private Set<Tupel<Integer>> optimalPathTiles(char[][] map, Tupel<Integer> endPosition, int[] dRow, int[] dCol) {
-        Set<Tupel<Integer>> tiles = new HashSet<>();
+    private Set<Tuple<Integer>> optimalPathTiles(char[][] map, Tuple<Integer> endPosition, int[] dRow, int[] dCol) {
+        Set<Tuple<Integer>> tiles = new HashSet<>();
 
         Queue<State16> toVisit = new LinkedList<>();
         for (int direction = 0; direction < 4; direction++) {
@@ -51,7 +51,7 @@ public class Day16 implements Day {
             int col = current.col;
             int direction = Math.abs(current.direction);
             int currentCost = current.cost;
-            tiles.add(new Tupel<>(row, col));
+            tiles.add(new Tuple<>(row, col));
 
             int newRow = row - dRow[direction];
             int newCol = col - dCol[direction];
@@ -76,7 +76,7 @@ public class Day16 implements Day {
         return tiles;
     }
 
-    private int minCostPath(char[][] map, Tupel<Integer> startPosition, Tupel<Integer> endPosition, int startDirection, int[] dRow, int[] dCol) {
+    private int minCostPath(char[][] map, Tuple<Integer> startPosition, Tuple<Integer> endPosition, int startDirection, int[] dRow, int[] dCol) {
         costs = new int[map.length][map[0].length][4];
 
         for (int[][] layer : costs) {

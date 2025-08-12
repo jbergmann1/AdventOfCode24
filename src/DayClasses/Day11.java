@@ -8,8 +8,8 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class Day11 implements Day {
-    public static Map<Long, Long> mem = new HashMap<>();
-    public static Map<Long, List<Long>> changeStoneMem = new HashMap<>();
+    private static final Map<Long, Long> mem = new HashMap<>();
+    private static final Map<Long, List<Long>> changeStoneMem = new HashMap<>();
 
     @Override
     public String execute() {

@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Day17 implements Day {
-    public static long A, B, C;
-    public static int pointer;
+    private static long A, B, C;
+    private static int pointer;
 
     @Override
     public String execute() {
