@@ -25,25 +25,27 @@ public class Day18 implements Day {
                 Arrays.fill(row, '.');
             }
 
+            StringBuilder output = new StringBuilder();
             for (int i = 0; i < bytePositions.size(); i++) {
                 var position = bytePositions.get(i);
                 memoryMap[position.x()][position.y()] = '#';
                 int shortestPath = calculateShortestPath(memoryMap);
                 if (i == currentTime - 1) {
-                    System.out.println("Minimal number of steps necessary: " + shortestPath);
+                    output.append("Minimal number of steps necessary: ").append(shortestPath);
                 }
                 if (shortestPath == -1) {
-                    System.out.println("First path blocking byte: " + position);
+                    output.append("\nFirst path blocking byte: ").append(position);
                     break;
                 }
             }
+            return output.toString();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
         return "";
     }
 
-    public int calculateShortestPath(Character[][] memoryMap) {
+    private int calculateShortestPath(Character[][] memoryMap) {
         Queue<Node18> queue = new PriorityQueue<>();
         Set<Node18> visited = new HashSet<>();
         int row = 0;
@@ -69,7 +71,7 @@ public class Day18 implements Day {
         return -1;
     }
 
-    public List<Tuple<Integer>> getNeighbours(Character[][] memoryMap, Set<Node18> visited, int row, int col) {
+    private List<Tuple<Integer>> getNeighbours(Character[][] memoryMap, Set<Node18> visited, int row, int col) {
         List<Tuple<Integer>> neighbours = new ArrayList<>();
         int[] xDirection = {-1, 0, 1, 0};
         int[] yDirection = {0, 1, 0, -1};
