@@ -9,9 +9,10 @@ import java.util.*;
 
 public class Day19 implements Day {
     private final static Map<Map.Entry<String, String>, Boolean> mem = new HashMap<>();
+    private final static Map<Map.Entry<String, String>, Integer> solutionCount = new HashMap<>();
     @Override
     public String execute() {
-        String filePath = Day.filePath + "input19.txt";
+        String filePath = Day.filePath + "testInput.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line = reader.readLine();
             List<String> towels = Arrays.asList(line.split(", "));
@@ -25,7 +26,17 @@ public class Day19 implements Day {
             for (String pattern : patterns) {
                 if (repeatPattern(pattern, towels)) repeatablePatternsCount++;
             }
-            return "Repeatable patterns: " + repeatablePatternsCount;
+            int solutionCounter = 0;
+            for (String pattern : patterns) {
+                if (getSolutionCount(pattern, towels)) {
+                    for (var entry : solutionCount.keySet()) {
+                        if (entry.getKey().equals(pattern)) {
+                            solutionCounter += solutionCount.get(entry);
+                        }
+                    }
+                }
+            }
+            return "Repeatable patterns: " + repeatablePatternsCount + "\nTotal solutions: " + solutionCounter;
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -33,10 +44,10 @@ public class Day19 implements Day {
     }
 
     public boolean repeatPattern(String pattern, List<String> towels) {
-        return patternHelper(pattern, towels, 0, 0);
+        return patternHelper(pattern, towels, 0);
     }
 
-    private boolean patternHelper(String pattern, List<String> towels, int index, int recursionDepth) {
+    private boolean patternHelper(String pattern, List<String> towels, int index) {
         if (index == pattern.length()) {
             return true;
         }
@@ -52,13 +63,41 @@ public class Day19 implements Day {
                 }
                 continue;
             }
-            if (patternHelper(pattern, towels, index + extension.length(), recursionDepth + 1)) {
+            if (patternHelper(pattern, towels, index + extension.length())) {
                 mem.put(new AbstractMap.SimpleEntry<>(remainingPattern, extension), true);
                 return true;
             }
             mem.put(new AbstractMap.SimpleEntry<>(remainingPattern, extension), false);
         }
         return false;
+    }
+
+    private boolean getSolutionCount(String pattern, List<String> towels) {
+        solutionCount.clear();
+        return solutionCountHelper(pattern, towels, 0);
+    }
+
+    private boolean solutionCountHelper(String pattern, List<String> towels, int index) {
+        if (index == pattern.length()) {
+            return true;
+        }
+        String remainingPattern = pattern.substring(index);
+        List<String> extensions = getExtensions(towels, pattern.substring(index));
+        boolean foundSolution = false;
+
+        for (String extension : extensions) {
+            int memExtension = solutionCount.getOrDefault(new AbstractMap.SimpleEntry<>(remainingPattern, extension), 0);
+            if (memExtension > 0) {
+                foundSolution = true;
+                continue;
+            }
+            if (solutionCountHelper(pattern, towels, index + extension.length())) {
+                int currentCount = solutionCount.getOrDefault(new AbstractMap.SimpleEntry<>(remainingPattern, extension), 0);
+                solutionCount.put(new AbstractMap.SimpleEntry<>(remainingPattern, extension), currentCount + 1);
+                foundSolution = true;
+            }
+        }
+        return foundSolution;
     }
 
     private List<String> getExtensions(List<String> towels, String remainingPattern) {
