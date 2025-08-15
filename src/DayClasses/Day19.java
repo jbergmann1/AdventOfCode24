@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Day19 implements Day {
+    private final static Map<Map.Entry<String, String>, Boolean> mem = new HashMap<>();
     @Override
     public String execute() {
         String filePath = Day.filePath + "input19.txt";
@@ -22,12 +21,11 @@ public class Day19 implements Day {
                 patterns.add(line);
             }
 
-            int repeatablePatternCount = 0;
+            int repeatablePatternsCount = 0;
             for (String pattern : patterns) {
-                System.out.println(pattern);
-                if (repeatPattern(pattern, towels)) repeatablePatternCount++;
+                if (repeatPattern(pattern, towels)) repeatablePatternsCount++;
             }
-            return "Repeatable patterns: " + repeatablePatternCount;
+            return "Repeatable patterns: " + repeatablePatternsCount;
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -35,22 +33,30 @@ public class Day19 implements Day {
     }
 
     public boolean repeatPattern(String pattern, List<String> towels) {
-        if (pattern.equals("wwgubrruggbgrwbggwbrubwggbwuuuwbbrwgbgbbbrbwruwwwwurw")) {
-            System.out.println("");
-        }
-        return patternHelper(pattern, towels, 0);
+        return patternHelper(pattern, towels, 0, 0);
     }
 
-    private boolean patternHelper(String pattern, List<String> towels, int index) {
+    private boolean patternHelper(String pattern, List<String> towels, int index, int recursionDepth) {
+        if (index == pattern.length()) {
+            return true;
+        }
         String remainingPattern = pattern.substring(index);
-        if (index == pattern.length() - 1) return true;
-        if (index >= pattern.length() - 1) return false;
-
         List<String> extensions = getExtensions(towels, remainingPattern);
+
         for (String extension : extensions) {
-            if (patternHelper(pattern, towels, index + extension.length())) {
+            Boolean memExtension = mem.get(new AbstractMap.SimpleEntry<>(remainingPattern, extension));
+
+            if (memExtension != null) {
+                if (memExtension) {
+                    return true;
+                }
+                continue;
+            }
+            if (patternHelper(pattern, towels, index + extension.length(), recursionDepth + 1)) {
+                mem.put(new AbstractMap.SimpleEntry<>(remainingPattern, extension), true);
                 return true;
             }
+            mem.put(new AbstractMap.SimpleEntry<>(remainingPattern, extension), false);
         }
         return false;
     }
