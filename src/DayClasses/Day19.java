@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Day19 implements Day {
     private final static Map<Map.Entry<String, String>, Boolean> mem = new HashMap<>();
-    private final static Map<Map.Entry<String, String>, Integer> solutionCount = new HashMap<>();
+    private final static Map<Map.Entry<Integer, String>, Integer> solutionCount = new HashMap<>();
     @Override
     public String execute() {
         String filePath = Day.filePath + "testInput.txt";
@@ -30,7 +30,7 @@ public class Day19 implements Day {
             for (String pattern : patterns) {
                 if (getSolutionCount(pattern, towels)) {
                     for (var entry : solutionCount.keySet()) {
-                        if (entry.getKey().equals(pattern)) {
+                        if (entry.getKey() == 0) {
                             solutionCounter += solutionCount.get(entry);
                         }
                     }
@@ -86,14 +86,16 @@ public class Day19 implements Day {
         boolean foundSolution = false;
 
         for (String extension : extensions) {
-            int memExtension = solutionCount.getOrDefault(new AbstractMap.SimpleEntry<>(remainingPattern, extension), 0);
-            if (memExtension > 0) {
-                foundSolution = true;
-                continue;
-            }
-            if (solutionCountHelper(pattern, towels, index + extension.length())) {
-                int currentCount = solutionCount.getOrDefault(new AbstractMap.SimpleEntry<>(remainingPattern, extension), 0);
-                solutionCount.put(new AbstractMap.SimpleEntry<>(remainingPattern, extension), currentCount + 1);
+            int memExtension = solutionCount.getOrDefault(new AbstractMap.SimpleEntry<>(index, extension), 0);
+            if (memExtension > 0 || solutionCountHelper(pattern, towels, index + extension.length())) {
+                int currentCount = solutionCount.getOrDefault(new AbstractMap.SimpleEntry<>(index, extension), 0);
+                int followingCount = 0;
+                for (var entry : solutionCount.keySet()) {
+                    if (entry.getKey() == index + extension.length()) {
+                        followingCount += solutionCount.get(entry);
+                    }
+                }
+                solutionCount.put(new AbstractMap.SimpleEntry<>(index, extension), Math.max(currentCount + followingCount, 1));
                 foundSolution = true;
             }
         }
