@@ -12,7 +12,7 @@ public class Day19 implements Day {
     private final static Map<Map.Entry<Integer, String>, Integer> solutionCount = new HashMap<>();
     @Override
     public String execute() {
-        String filePath = Day.filePath + "testInput.txt";
+        String filePath = Day.filePath + "input19.txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
             String line = reader.readLine();
             List<String> towels = Arrays.asList(line.split(", "));
@@ -26,8 +26,9 @@ public class Day19 implements Day {
             for (String pattern : patterns) {
                 if (repeatPattern(pattern, towels)) repeatablePatternsCount++;
             }
-            int solutionCounter = 0;
+            long solutionCounter = 0;
             for (String pattern : patterns) {
+                System.out.println(pattern);
                 if (getSolutionCount(pattern, towels)) {
                     for (var entry : solutionCount.keySet()) {
                         if (entry.getKey() == 0) {
@@ -86,8 +87,16 @@ public class Day19 implements Day {
         boolean foundSolution = false;
 
         for (String extension : extensions) {
-            int memExtension = solutionCount.getOrDefault(new AbstractMap.SimpleEntry<>(index, extension), 0);
-            if (memExtension > 0 || solutionCountHelper(pattern, towels, index + extension.length())) {
+            int memExtension = solutionCount.getOrDefault(new AbstractMap.SimpleEntry<>(index, extension), -1);
+            if (memExtension > 0) {
+                foundSolution = true;
+                continue;
+            } else if (memExtension == 0) {
+                continue;
+            }
+            //596594064985
+            //640028712201
+            if (solutionCountHelper(pattern, towels, index + extension.length())) {
                 int currentCount = solutionCount.getOrDefault(new AbstractMap.SimpleEntry<>(index, extension), 0);
                 int followingCount = 0;
                 for (var entry : solutionCount.keySet()) {
@@ -97,6 +106,8 @@ public class Day19 implements Day {
                 }
                 solutionCount.put(new AbstractMap.SimpleEntry<>(index, extension), Math.max(currentCount + followingCount, 1));
                 foundSolution = true;
+            } else {
+                solutionCount.put(new AbstractMap.SimpleEntry<>(index, extension), 0);
             }
         }
         return foundSolution;
